@@ -137,7 +137,7 @@ module RailsAdmin
         # Returns collection of all selectable records
         def collection(scope = nil)
           (scope || bindings[:controller].list_entries(associated_model_config, :index, associated_collection_scope, false)).
-            map { |o| [o.send(associated_object_label_method), o.send(associated_primary_key).to_s] }
+            map { |o| [o.send(associated_object_label_method), serialize_id(o.send(associated_primary_key)).to_s] }
         end
 
         # has many?
@@ -151,6 +151,16 @@ module RailsAdmin
 
         def associated_model_limit
           RailsAdmin.config.default_associated_collection_limit
+        end
+
+      private
+
+        def serialize_id(id)
+          if id.is_a?(Array)
+            RailsAdmin.config.composite_key_serializer.serialize(id)
+          else
+            id
+          end
         end
       end
     end

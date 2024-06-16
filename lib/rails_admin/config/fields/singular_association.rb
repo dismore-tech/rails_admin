@@ -33,6 +33,14 @@ module RailsAdmin
         def selected_id
           raise NoMethodError # abstract
         end
+
+        def parse_input(params)
+          return unless nested_form && params[method_name].try(:[], :id).present?
+
+          ids = associated_model_config.abstract_model.parse_id(params[method_name][:id])
+          ids = ids.to_composite_keys.to_s if ids.respond_to?(:to_composite_keys)
+          params[method_name][:id] = ids
+        end
       end
     end
   end

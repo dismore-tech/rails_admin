@@ -23,7 +23,7 @@ module RailsAdmin
             i = 0
             super.sort_by { |a| [selected.index(a[1]) || selected.size, i += 1] }
           else
-            value.map { |o| [o.send(associated_object_label_method), o.send(associated_primary_key)] }
+            value.map { |o| [o.send(associated_object_label_method), serialize_id(o.send(associated_primary_key))] }
           end
         end
 
@@ -36,7 +36,24 @@ module RailsAdmin
         end
 
         def selected_ids
-          value.map { |s| s.send(associated_primary_key).to_s }
+          value.map { |s| serialize_id(s.send(associated_primary_key)).to_s }
+        end
+
+        def parse_input(params)
+          return unless associated_model_config.abstract_model.primary_key.is_a?(Array)
+
+          if nested_form
+            params[method_name].each_value do |value|
+              value[:id] = associated_model_config.abstract_model.parse_id(value[:id])
+            end
+          elsif params[method_name].is_a?(Array)
+            params[method_name] = params[method_name].map { |key| associated_model_config.abstract_model.parse_id(key) if key.present? }.compact
+            if params[method_name].empty?
+              # Workaround for Arel::Visitors::UnsupportedVisitError in #ids_writer, until https://github.com/rails/rails/pull/51116 is in place
+              params.delete(method_name)
+              params[name] = []
+            end
+          end
         end
       end
     end

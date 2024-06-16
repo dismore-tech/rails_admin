@@ -350,7 +350,7 @@ RSpec.describe 'Index action', type: :request do
 
   describe 'fields' do
     before do
-      if defined?(CompositePrimaryKeys)
+      if defined?(ActiveRecord) && ActiveRecord.gem_version >= Gem::Version.new('7.1') || defined?(CompositePrimaryKeys)
         RailsAdmin.config Fan do
           configure(:fanships) { hide }
           configure(:fanship) { hide }

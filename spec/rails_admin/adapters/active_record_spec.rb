@@ -128,8 +128,9 @@ RSpec.describe 'RailsAdmin::Adapters::ActiveRecord', active_record: true do
       end
 
       it 'supports retrieval by bulk_ids with composite_primary_keys', composite_primary_keys: true do
-        expect(RailsAdmin::AbstractModel.new(Fanship).all(bulk_ids: ['1,2', '3,4']).to_sql).
-          to include 'WHERE ("fans_teams"."fan_id" = 1 AND "fans_teams"."team_id" = 2 OR "fans_teams"."fan_id" = 3 AND "fans_teams"."team_id" = 4)'
+        expect(RailsAdmin::AbstractModel.new(Fanship).all(
+          bulk_ids: %w[1_2 3_4],
+        ).to_sql.tr('`', '"')).to include 'WHERE ("fans_teams"."fan_id" = 1 AND "fans_teams"."team_id" = 2 OR "fans_teams"."fan_id" = 3 AND "fans_teams"."team_id" = 4)'
       end
 
       it 'supports pagination' do

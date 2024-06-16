@@ -2,6 +2,7 @@
 
 require 'rails_admin/config/lazy_model'
 require 'rails_admin/config/sections/list'
+require 'rails_admin/support/composite_key_serializer'
 require 'active_support/core_ext/module/attribute_accessors'
 
 module RailsAdmin
@@ -83,6 +84,9 @@ module RailsAdmin
 
       # Set where RailsAdmin fetches JS/CSS from, defaults to :sprockets
       attr_writer :asset_source
+
+      # For customization of composite key representation
+      attr_accessor :composite_key_serializer
 
       # Setup authentication to be run as a before filter
       # This is run inside the controller instance so you can setup any authentication you need to
@@ -329,6 +333,7 @@ module RailsAdmin
         @navigation_static_links = {}
         @navigation_static_label = nil
         @asset_source = nil
+        @composite_key_serializer = RailsAdmin::Support::CompositeKeySerializer
         @parent_controller = '::ActionController::Base'
         @forgery_protection_settings = {with: :exception}
         RailsAdmin::Config::Actions.reset
