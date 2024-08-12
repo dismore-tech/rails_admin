@@ -6,7 +6,7 @@ module RailsAdmin
   module Config
     module Fields
       module Types
-        class TimestampTz < RailsAdmin::Config::Fields::Types::Datetime
+        class Timestamptz < RailsAdmin::Config::Fields::Types::Datetime
           # Register field type for the type loader
           RailsAdmin::Config::Fields::Types.register(self)
         end
